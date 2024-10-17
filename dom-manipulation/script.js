@@ -96,24 +96,7 @@ function createAddQuoteForm() {
 // Event listener to show a random quote when the button is clicked
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
-function addImportExportButtons() {
-    const exportButton = document.createElement('button');
-    exportButton.textContent = 'Export Quotes';
-    exportButton.onclick = exportToJsonFile;
 
-    const importInput = document.createElement('input');
-    importInput.type = 'file';
-    importInput.id = 'importFile';
-    importInput.accept = '.json';
-    importInput.onchange = importFromJsonFile;
-
-    const formContainer = document.getElementById('addQuoteForm');
-    formContainer.appendChild(exportButton);
-    formContainer.appendChild(importInput);
-}
-
-// Add import/export buttons to the page
-addImportExportButtons();
 
 // Show a random quote initially when the page loads
 showRandomQuote();

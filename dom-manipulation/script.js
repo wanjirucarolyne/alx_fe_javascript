@@ -1,10 +1,9 @@
 // Array to hold quote objects
 let quotes = [
-    { text: "Never give up because great things take time.", category: "Motivation" },
-    { text: "Risking is better than regretting.", category: "Inspiration" },
-    { text: "Do what your future self will be proud of.", category: "Self growth" },
+    { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
+    { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Inspiration" },
+    { text: "Life isn't about finding yourself its about creating yourself", category: "Inspiration" },
 ];
-console.log(quotes)
 
 // Function to display a random quote
 function showRandomQuote() {
@@ -33,8 +32,41 @@ function addQuote() {
     }
 }
 
+// Function to create the form for adding a new quote
+function createAddQuoteForm() {
+    // Create input elements for the quote text and category
+    const formContainer = document.createElement('div');
+    formContainer.id = 'addQuoteForm';
+
+    const quoteInput = document.createElement('input');
+    quoteInput.id = 'newQuoteText';
+    quoteInput.type = 'text';
+    quoteInput.placeholder = 'Enter a new quote';
+
+    const categoryInput = document.createElement('input');
+    categoryInput.id = 'newQuoteCategory';
+    categoryInput.type = 'text';
+    categoryInput.placeholder = 'Enter quote category';
+
+    // Create the button to add the quote
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Quote';
+    addButton.onclick = addQuote;
+
+    // Append the inputs and button to the form container
+    formContainer.appendChild(quoteInput);
+    formContainer.appendChild(categoryInput);
+    formContainer.appendChild(addButton);
+
+    // Add the form container to the body
+    document.body.appendChild(formContainer);
+}
+
 // Event listener to show a random quote when the button is clicked
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
 // Show a random quote initially when the page loads
 showRandomQuote();
+
+// Create the form for adding new quotes
+createAddQuoteForm();

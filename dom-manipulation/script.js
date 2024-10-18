@@ -121,37 +121,36 @@ function filterQuotes() {
 
 
 
-async function syncQuotesWithServer() {
+const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Replace with an actual server URL if available
+
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
     try {
-        // Fetch latest quotes from server
         const response = await fetch(serverUrl);
         const serverQuotes = await response.json();
 
-        // Resolve conflicts by giving precedence to server data
-        quotes = resolveConflicts(serverQuotes);
+        // Assuming serverQuotes have the format [{ text: "...", category: "..." }]
+        mergeQuotesWithLocal(serverQuotes);
         saveQuotes();
         populateCategories();
         showRandomQuote();
-        alert('Quotes synced with server successfully!');
+        alert('Quotes fetched from the server successfully!');
     } catch (error) {
-        console.error('Error syncing with server:', error);
+        console.error('Error fetching quotes from the server:', error);
     }
 }
 
-// Function to resolve conflicts between local and server data
-function resolveConflicts(serverQuotes) {
+// Function to merge server quotes with local quotes and resolve conflicts
+function mergeQuotesWithLocal(serverQuotes) {
     const localQuoteTexts = new Set(quotes.map(q => q.text));
-    const mergedQuotes = [...quotes];
 
     serverQuotes.forEach(serverQuote => {
+        // Avoid duplicating quotes that already exist locally
         if (!localQuoteTexts.has(serverQuote.text)) {
-            mergedQuotes.push({ text: serverQuote.text, category: serverQuote.category });
+            quotes.push({ text: serverQuote.text, category: serverQuote.category });
         }
     });
-
-    return mergedQuotes;
 }
-
 // Function to create the form for adding a new quote
 function createAddQuoteForm() {
     // Create input elements for the quote text and category

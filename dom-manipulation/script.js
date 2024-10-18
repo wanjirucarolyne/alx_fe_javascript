@@ -267,3 +267,6 @@ showRandomQuote();
 
 // Create the form for adding new quotes
 createAddQuoteForm();
+
+
+setInterval(syncQuotes, 60000);

@@ -121,6 +121,7 @@ function filterQuotes() {
 
 
 
+// Mock server URL for quote syncing simulation
 const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Replace with an actual server URL if available
 
 // Function to fetch quotes from the server
@@ -140,6 +141,27 @@ async function fetchQuotesFromServer() {
     }
 }
 
+// Function to post a new quote to the server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch(serverUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quote)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to post quote to the server.');
+        }
+
+        alert('Quote posted to the server successfully!');
+    } catch (error) {
+        console.error('Error posting quote to the server:', error);
+    }
+}
+
 // Function to merge server quotes with local quotes and resolve conflicts
 function mergeQuotesWithLocal(serverQuotes) {
     const localQuoteTexts = new Set(quotes.map(q => q.text));
@@ -151,6 +173,7 @@ function mergeQuotesWithLocal(serverQuotes) {
         }
     });
 }
+
 // Function to create the form for adding a new quote
 function createAddQuoteForm() {
     // Create input elements for the quote text and category

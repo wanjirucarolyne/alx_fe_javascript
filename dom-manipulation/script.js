@@ -124,6 +124,58 @@ function filterQuotes() {
 // Mock server URL for quote syncing simulation
 const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Replace with an actual server URL if available
 
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(serverUrl);
+        const serverQuotes = await response.json();
+
+        // Assuming serverQuotes have the format [{ text: "...", category: "..." }]
+        mergeQuotesWithLocal(serverQuotes);
+        saveQuotes();
+        populateCategories();
+        showRandomQuote();
+        alert('Quotes fetched from the server successfully!');
+    } catch (error) {
+        console.error('Error fetching quotes from the server:', error);
+    }
+}
+
+// Function to post a new quote to the server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch(serverUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quote)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to post quote to the server.');
+        }
+
+        alert('Quote posted to the server successfully!');
+    } catch (error) {
+        console.error('Error posting quote to the server:', error);
+    }
+}
+
+// Function to merge server quotes with local quotes and resolve conflicts
+function mergeQuotesWithLocal(serverQuotes) {
+    const localQuoteTexts = new Set(quotes.map(q => q.text));
+
+    serverQuotes.forEach(serverQuote => {
+        // Avoid duplicating quotes that already exist locally
+        if (!localQuoteTexts.has(serverQuote.text)) {
+            quotes.push({ text: serverQuote.text, category: serverQuote.category });
+        }
+    });
+}
+
+
+
 // Function to sync quotes with the server
 async function syncQuotes() {
     try {
@@ -175,26 +227,6 @@ async function syncLocalToServer() {
     }
 }
 
-// Function to post a new quote to the server
-async function postQuoteToServer(quote) {
-    try {
-        const response = await fetch(serverUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(quote)
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to post quote to the server.');
-        }
-
-        alert('Quote posted to the server successfully!');
-    } catch (error) {
-        console.error('Error posting quote to the server:', error);
-    }
-}
 
 // Function to create the form for adding a new quote
 function createAddQuoteForm() {

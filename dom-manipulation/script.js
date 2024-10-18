@@ -197,7 +197,7 @@ async function syncQuotes() {
         populateCategories();
         showRandomQuote();
 
-        alert('Quotes synchronized successfully!');
+        displayNotification('Quotes synced with server!');
     } catch (error) {
         console.error('Error during quote synchronization:', error);
     }

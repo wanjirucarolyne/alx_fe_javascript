@@ -124,20 +124,54 @@ function filterQuotes() {
 // Mock server URL for quote syncing simulation
 const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Replace with an actual server URL if available
 
-// Function to fetch quotes from the server
-async function fetchQuotesFromServer() {
+// Function to sync quotes with the server
+async function syncQuotes() {
     try {
+        // Step 1: Fetch quotes from the server
         const response = await fetch(serverUrl);
+        if (!response.ok) {
+            throw new Error('Failed to fetch quotes from the server.');
+        }
         const serverQuotes = await response.json();
 
-        // Assuming serverQuotes have the format [{ text: "...", category: "..." }]
+        // Step 2: Merge server quotes with local quotes
         mergeQuotesWithLocal(serverQuotes);
+
+        // Step 3: Post new local quotes to the server
+        await syncLocalToServer();
+
+        // Step 4: Save the synchronized quotes to local storage
         saveQuotes();
         populateCategories();
         showRandomQuote();
-        alert('Quotes fetched from the server successfully!');
+
+        alert('Quotes synchronized successfully!');
     } catch (error) {
-        console.error('Error fetching quotes from the server:', error);
+        console.error('Error during quote synchronization:', error);
+    }
+}
+
+// Function to merge server quotes with local quotes and resolve conflicts
+function mergeQuotesWithLocal(serverQuotes) {
+    const localQuoteTexts = new Set(quotes.map(q => q.text));
+
+    serverQuotes.forEach(serverQuote => {
+        // Avoid duplicating quotes that already exist locally
+        if (!localQuoteTexts.has(serverQuote.text)) {
+            quotes.push({ text: serverQuote.text, category: serverQuote.category });
+        }
+    });
+}
+
+// Function to sync local quotes to the server
+async function syncLocalToServer() {
+    const localQuoteTexts = new Set(quotes.map(q => q.text));
+
+    for (const quote of quotes) {
+        // If the quote does not exist on the server, post it
+        if (!localQuoteTexts.has(quote.text)) {
+            await postQuoteToServer(quote);
+        }
     }
 }
 
@@ -160,18 +194,6 @@ async function postQuoteToServer(quote) {
     } catch (error) {
         console.error('Error posting quote to the server:', error);
     }
-}
-
-// Function to merge server quotes with local quotes and resolve conflicts
-function mergeQuotesWithLocal(serverQuotes) {
-    const localQuoteTexts = new Set(quotes.map(q => q.text));
-
-    serverQuotes.forEach(serverQuote => {
-        // Avoid duplicating quotes that already exist locally
-        if (!localQuoteTexts.has(serverQuote.text)) {
-            quotes.push({ text: serverQuote.text, category: serverQuote.category });
-        }
-    });
 }
 
 // Function to create the form for adding a new quote

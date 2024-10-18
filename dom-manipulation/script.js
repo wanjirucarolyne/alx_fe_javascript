@@ -118,6 +118,40 @@ function filterQuotes() {
     localStorage.setItem('selectedCategory', selectedCategory);
 }
 
+
+
+
+async function syncQuotesWithServer() {
+    try {
+        // Fetch latest quotes from server
+        const response = await fetch(serverUrl);
+        const serverQuotes = await response.json();
+
+        // Resolve conflicts by giving precedence to server data
+        quotes = resolveConflicts(serverQuotes);
+        saveQuotes();
+        populateCategories();
+        showRandomQuote();
+        alert('Quotes synced with server successfully!');
+    } catch (error) {
+        console.error('Error syncing with server:', error);
+    }
+}
+
+// Function to resolve conflicts between local and server data
+function resolveConflicts(serverQuotes) {
+    const localQuoteTexts = new Set(quotes.map(q => q.text));
+    const mergedQuotes = [...quotes];
+
+    serverQuotes.forEach(serverQuote => {
+        if (!localQuoteTexts.has(serverQuote.text)) {
+            mergedQuotes.push({ text: serverQuote.text, category: serverQuote.category });
+        }
+    });
+
+    return mergedQuotes;
+}
+
 // Function to create the form for adding a new quote
 function createAddQuoteForm() {
     // Create input elements for the quote text and category
